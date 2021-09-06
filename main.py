@@ -55,8 +55,8 @@ class DPProblem:
         body = '\n  const int N = a.size();\n'
         body += '  int mx = ' + str(objective[0]) + ';\n'
         body += '  for (int i = 0; i < N; i++) {\n'
-
-        body += '  }'
+        body += ('  ' * 2) + 'mx = max(mx, mx + a[i]);\n'
+        body += '  }\n'
         body += '  return mx;\n'
         return 'int {0}(const vector<int>& a)'.format(self.name) + '{ ' + body + '}'
 
