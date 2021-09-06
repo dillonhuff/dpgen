@@ -43,3 +43,20 @@ e = Match('a', [MatchCase('[]', '0'), MatchCase('(k:s)', 'k + sumf s')])
 sumf = FunctionDef('sumf', ['a'], e)
 
 print(sumf)
+
+class DPProblem:
+
+    def __init__(self, name, accum, obj):
+        self.name = name
+        self.accum = accum
+        self.obj = obj
+
+    def cpp_program(self):
+        body = '\n  const int N = a.size();\n'
+        body += '  int mx = ' + str(objective[0]) + ';\n'
+        body += '  return mx;\n'
+        return 'int {0}(const vector<int>& a)'.format(self.name) + '{ ' + body + '}'
+
+objective = { 0 : 0 }
+dpprob = DPProblem('maxsum', 'max', objective)
+print(dpprob.cpp_program())
