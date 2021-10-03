@@ -1,3 +1,6 @@
+def is_binop(op):
+    return op.tag in ['=', '>', '<', '+', '-']
+
 class ASTNode:
 
     def __init__(self, tag, args):
@@ -6,9 +9,13 @@ class ASTNode:
 
     def __repr__(self):
         if self.tag == 'call':
+            if is_binop(self.args[0]):
+                assert(len(self.args) == 3)
+                return '({0} {1} {2})'.format(self.args[1], self.args[0], self.args[2])
+            #' '.join(map(str, self.args[1:]))) 
             return '({0} {1})'.format(self.args[0], ' '.join(map(str, self.args[1:])))
         elif self.tag == 'lam':
-            return '(lam {0}. {1})'.format(self.args[0], ' '.join(map(str, self.args[1:])))
+            return '(\u03bb {0}. {1})'.format(self.args[0], ' '.join(map(str, self.args[1:])))
         elif self.tag == 'case':
             return '(case {0})'.format(' '.join(map(str, self.args)))
         else:
