@@ -44,6 +44,13 @@ sumf = FunctionDef('sumf', ['a'], e)
 
 print(sumf)
 
+class BigOp:
+
+    def __init__(self, binop, local_cost, memory):
+        self.binop = binop
+        self.local_cost = local_cost
+        self.memory = memory
+
 class DPProblem:
 
     def __init__(self, name, accum, obj):
@@ -53,13 +60,18 @@ class DPProblem:
 
     def cpp_program(self):
         body = '\n  const int N = a.size();\n'
+        body += '\n  vector<int> dp(N, 0);\n'
         body += '  int mx = ' + str(objective[0]) + ';\n'
         body += '  for (int i = 0; i < N; i++) {\n'
-        body += ('  ' * 2) + 'mx = max(mx, mx + a[i]);\n'
+        body += '    dp[i] = ' + '{1}(a[i]);\n'.format(objective[-1].binop, objective[-1].local_cost)
+        body += '    for (int j = 0; j < i; j++) {\n'
+        body += ('  ' * 3) + 'dp[i] = max(dp[i], dp[j] {0} {1}(a[i]));\n'.format(objective[-1].binop, objective[-1].local_cost)
+        body += '    }\n'
         body += '  }\n'
-        body += '  return mx;\n'
+        # TODO support argmin or min
+        body += '  return max(mx, *max_element(begin(dp), end(dp)));\n'
         return 'int {0}(const vector<int>& a)'.format(self.name) + '{ ' + body + '}'
 
-objective = { 0 : 0 }
+objective = [0, BigOp('+', 'f', 0)]
 dpprob = DPProblem('maxsum', 'max', objective)
 print(dpprob.cpp_program())
