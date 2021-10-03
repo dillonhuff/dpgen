@@ -9,6 +9,10 @@ class ASTNode:
 
     def __repr__(self):
         if self.tag == 'call':
+            if self.args[0].tag == 'len':
+                return '|{0}|'.format(self.args[1]) #, self.args[2])
+            if self.args[0].tag == 'aref':
+                return '{0}[{1}]'.format(self.args[1], self.args[2])
             if is_binop(self.args[0]):
                 assert(len(self.args) == 3)
                 return '({0} {1} {2})'.format(self.args[1], self.args[0], self.args[2])
