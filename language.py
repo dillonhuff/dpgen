@@ -12,7 +12,6 @@ class ASTNode:
         elif self.tag == 'case':
             return '(case {0})'.format(' '.join(map(str, self.args)))
         else:
-            print('Tag:', self.tag)
             assert(len(self.args) == 0)
             return '{}'.format(self.tag)
 
@@ -32,12 +31,16 @@ def fc(fun, args):
     assert(isinstance(fun, str))
     return call(prim(fun), args)
 
+def sub(a, b):
+    return fc('-', [a, b])
+
 ssa = call(prim('ss'), [prim('a')])
 F = case([
     fc('=', [call(prim('len'), [prim('s')]), prim(0)]),
     prim(0),
     fc('>', [fc('len', [prim('s')]), prim(0)]),
-    fc('sum', [0, fc('len', [prim('s')])])
+    fc('sum', [0, sub(fc('len', [prim('s')]), prim(1)),
+        lam(prim('i'), fc('aref', [prim('s'), prim('i')]))])
     ])
 obj = lam(prim('s'), call(F, [prim('s')]))
 nd = call(prim('max'), [ssa, obj])
