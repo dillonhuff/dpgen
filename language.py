@@ -22,7 +22,12 @@ class ASTNode:
             return '(\u03bb {0}. {1})'.format(self.args[0], ' '.join(map(str, self.args[1:])))
         elif self.tag == 'case':
             return '(case {0})'.format(' '.join(map(str, self.args)))
+        elif self.tag == 'metavar':
+            assert(len(self.args) == 1)
+            return '{}'.format(self.args[0])
         else:
+            if (len(self.args) != 0):
+                print('ERROR: Error multiple arguments to primtive or metavar {}'.format(self.args))
             assert(len(self.args) == 0)
             return '{}'.format(self.tag)
 
@@ -62,6 +67,18 @@ nd = call(prim('max'), [ssa, obj])
 print(nd)
 
 def matchr(pattern, e, res):
+    print('pat = ', pattern)
+    print('e   = ', e)
+    print('res =', res)
+    if pattern.tag == 'metavar':
+        res[pattern] = e
+        print('  res = ', res)
+    elif pattern.tag != e.tag or len(pattern.args) != len(e.args):
+        print('Error: pattern tag {0} does not match {1}'.format(pattern, e))
+        assert(False)
+    else:
+        for i in range(0, len(pattern.args)):
+            matchr(pattern.args[i], e.args[i], res)
     return
 
 def match(pattern, e):
@@ -71,6 +88,10 @@ def match(pattern, e):
 
 def push_max(e):
     r = match(fc('max', [fc('ss', [mv('A')]), mv('B')]), e)
+    print(r)
+    print('Match res')
+    for mvar in r:
+        print('  ', mvar, ' -> ', r[mvar])
     return e
 
 def convert_to_dp(problem):
