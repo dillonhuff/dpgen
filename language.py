@@ -32,6 +32,9 @@ def prim(name):
 def lam(var, expr):
     return ASTNode('lam', [var, expr])
 
+def mv(name):
+    return ASTNode('metavar', name)
+
 def call(fun, args):
     return ASTNode('call', [fun] + args)
 
@@ -58,4 +61,28 @@ nd = call(prim('max'), [ssa, obj])
 
 print(nd)
 
+def matchr(pattern, e, res):
+    return
 
+def match(pattern, e):
+    res = {}
+    matchr(pattern, e, res)
+    return res
+
+def push_max(e):
+    r = match(fc('max', [fc('ss', [mv('A')]), mv('B')]), e)
+    return e
+
+def convert_to_dp(problem):
+    # Push max
+    pl = push_max(problem)
+    # Determine last M cases
+    # Extract named function for innermost max (DP)
+    # Pull last sum term out of max
+    # Determine the last free variable needed
+    # to move the sum term
+    # Pull the last term out of the max
+    # Unify the resulting expression with a call to DP
+    return pl
+
+print(convert_to_dp(nd))
