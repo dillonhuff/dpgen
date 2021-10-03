@@ -28,8 +28,17 @@ def call(fun, args):
 def case(cases):
     return ASTNode('case', cases)
 
+def fc(fun, args):
+    assert(isinstance(fun, str))
+    return call(prim(fun), args)
+
 ssa = call(prim('ss'), [prim('a')])
-F = case([call(prim('='), [call(prim('len'), [prim('s')]), prim(0)])])
+F = case([
+    fc('=', [call(prim('len'), [prim('s')]), prim(0)]),
+    prim(0),
+    fc('>', [fc('len', [prim('s')]), prim(0)]),
+    fc('sum', [0, fc('len', [prim('s')])])
+    ])
 obj = lam(prim('s'), call(F, [prim('s')]))
 nd = call(prim('max'), [ssa, obj])
 
