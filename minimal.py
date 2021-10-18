@@ -1,12 +1,12 @@
 def print_dp(M):
     surrounding = ''
     for i in range(M + 1):
-        surrounding += 'case |a| = ' + str(i) + '->\n'
+        surrounding += 'case |a| = ' + str(i) + ' ->\n'
         surrounding += '  return B {}'.format(i) + '\n'
 
-    surrounding += 'case |a| = ' + str(M + 1) + '->\n'
+    surrounding += 'case |a| = ' + str(M + 1) + ' ->\n'
     surrounding += '  return f ...\n'
-    surrounding += 'case |a| > ' + str(M + 1) + '->\n'
+    surrounding += 'case |a| > ' + str(M + 1) + ' ->\n'
     surrounding += '  mx = -\u221e\n'
     dpvars = ''
     vs = ''
