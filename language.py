@@ -87,7 +87,7 @@ def match(pattern, e):
     return res
 
 def push_max(e):
-    r = match(fc('max', [fc('ss', [mv('A')]), mv('B')]), e)
+    r = match(fc('max', [fc('ss', [mv('A')]), lam(mv('S'), mv('F'))]), e)
     print(r)
     print('Match res')
     for mvar in r:
