@@ -24,7 +24,9 @@ def print_dp(M):
     surrounding += '  ' + ('  ' * M) + 'mx = max(mx, DP a[:i{0}) {1})'.format(M - 1, dpvars) + '\n'
     surrounding += '  return mx\n'
     surrounding += '\n'
-    surrounding += 'def DP v {0}'.format(vs) + ' = max [1, |v| - 1] (\u03bb e. (DP v[:e) {1}) + f(v[e], {2}))'.format(vs, recargs, vs)
+    surrounding += 'def DP v {0}'.format(vs) + ' =\n'
+    surrounding += '  case |v| > 1 ->\n'
+    surrounding += '    max [1, |v| - 1] (\u03bb e. (DP v[:e) {1}) + f(v[e], {2}))'.format(vs, recargs, vs) + '\n\n'
     print(surrounding)
 
 print_dp(1)
