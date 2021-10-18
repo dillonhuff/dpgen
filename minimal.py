@@ -4,17 +4,12 @@ def print_dp(M):
         surrounding += 'case |a| = ' + str(i) + ' ->\n'
         surrounding += '  return B {}'.format(i) + '\n'
 
-    surrounding += 'case |a| = ' + str(M + 1) + ' ->\n'
-    aargs = []
-    for i in range(0, M + 1):
-        aargs.append('a[{}]'.format(i))
-    surrounding += '  return f({})\n'.format(', '.join(aargs))
-    surrounding += 'case |a| > ' + str(M + 1) + ' ->\n'
+    surrounding += 'case |a| > ' + str(M) + ' ->\n'
     surrounding += '  mx = -\u221e\n'
     dpvars = ''
     vs = ''
     for i in range(M):
-        surrounding += '  ' + ('  ' * i) + 'for i{}\n'.format(i)
+        surrounding += '  ' + ('  ' * i) + 'for i{} in []:\n'.format(i)
         dpvars += 'a[i{}]'.format(i)
         vs += 'v{}'.format(i)
 
@@ -25,6 +20,12 @@ def print_dp(M):
     surrounding += '  return mx\n'
     surrounding += '\n'
     surrounding += 'def DP v {0}'.format(vs) + ' =\n'
+    aargs = []
+    for i in range(0, M):
+        aargs.append('v[{}]'.format(i))
+    aargs.append('v0')
+    surrounding += '  case |v| = ' + str(M) + ' ->\n'
+    surrounding += '    return f({})\n'.format(', '.join(aargs))
     surrounding += '  case |v| > 1 ->\n'
     surrounding += '    max [1, |v| - 1] (\u03bb e. (DP v[:e) {1}) + f(v[e], {2}))'.format(vs, recargs, vs) + '\n\n'
     print(surrounding)
