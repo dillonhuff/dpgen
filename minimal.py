@@ -5,7 +5,10 @@ def print_dp(M):
         surrounding += '  return B {}'.format(i) + '\n'
 
     surrounding += 'case |a| = ' + str(M + 1) + ' ->\n'
-    surrounding += '  return f ...\n'
+    aargs = []
+    for i in range(0, M + 1):
+        aargs.append('a[{}]'.format(i))
+    surrounding += '  return f({})\n'.format(', '.join(aargs))
     surrounding += 'case |a| > ' + str(M + 1) + ' ->\n'
     surrounding += '  mx = -\u221e\n'
     dpvars = ''
