@@ -8,8 +8,10 @@ def print_dp(dpspec, filename, test_cases):
     M = dpspec.M()
 
     surrounding = ''
+    surrounding += 'import math\n\n'
     for bf in dpspec.base_cases:
         surrounding += bf + '\n'
+    surrounding += dpspec.f + '\n\n'
 
     surrounding += 'NEG_INF = -1000000000\n\n'
 
@@ -23,14 +25,14 @@ def print_dp(dpspec, filename, test_cases):
     dpvars = ''
     vs = ''
     for i in range(M):
-        surrounding += '    ' + ('  ' * i) + 'for i{} in []:\n'.format(i)
+        surrounding += '    ' + ('  ' * i) + 'for i{} in range(1, len(a)):\n'.format(i)
         dpvars += 'a[i{}]'.format(i)
         vs += 'v{}'.format(i)
 
     recargs = 'v[e]'
     for i in range(0, M - 1):
         recargs += ' v{}'.format(i)
-    surrounding += '    ' + ('  ' * M) + 'mx = max(mx, DP(a[:i{0} - 1], {1}))'.format(M - 1, dpvars) + '\n'
+    surrounding += '    ' + ('  ' * M) + 'mx = max(mx, DP(a[:i{0}], {1}))'.format(M - 1, dpvars) + '\n'
     surrounding += '    return mx\n'
     surrounding += '\n'
     surrounding += 'def DP(v, {0}):'.format(vs) + '\n'
@@ -43,7 +45,7 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '  if len(v) > 1:\n'
     surrounding += '    mx = NEG_INF\n'
     surrounding += '    for e in range(1, len(v)):\n'
-    surrounding += '      mx = max(mx, DP(v[:e - 1], {1}) + f(v[e], {2}))'.format(vs, recargs, vs) + '\n\n'
+    surrounding += '      mx = max(mx, DP(v[:e], {1}) + f(v[e], {2}))'.format(vs, recargs, vs) + '\n\n'
     surrounding += '    return mx\n'
 
     surrounding += '\n\n'
@@ -60,7 +62,7 @@ class DPSpec:
     def M(self):
         return len(self.base_cases) - 1
 
-test_cases = [([], 0)]
-print_dp(DPSpec(['def B_0(a): return 0', 'def B_1(a): return 0'], 'math.abs(v0 - v1)'), 'dp.py', test_cases)
+test_cases = [([], 0), ([1], 0), ([0, 200], 200)]
+print_dp(DPSpec(['def B_0(a): return 0', 'def B_1(a): return 0'], 'def f(v0, v1): return abs(v0 - v1)'), 'dp.py', test_cases)
 run_cmd('python dp.py')
 
