@@ -72,6 +72,9 @@ class DPProblem:
         body += '  return max(mx, *max_element(begin(dp), end(dp)));\n'
         return 'int {0}(const vector<int>& a)'.format(self.name) + '{ ' + body + '}'
 
+def defined(direction, offset, var):
+    return 'defined'
+
 def undefined(direction, offset, var):
     return 'undefined'
 
@@ -79,7 +82,7 @@ def undefined(direction, offset, var):
 f = 'lambda i. |S| == 0 then inf, S[0] > i then a[r(0, i, S)], S[|S| - 1] < i then a[l(0, i, S)], else: min(a[l(0, i, S)], a[r(0, i, S)])' # How do we deal with leftmost / rightmost edge cases?
 # Q: Can we name the special cases from the main function's form?
 # A: Maybe write in terms of defined(l(0, i, s))?
-f = [([undefined('l', 0, 'i'), undefined('r', 0, 'i')], 'inf')
+f = [([undefined('l', 0, 'i'), undefined('r', 0, 'i')], 'inf'),
      ([undefined('l', 0, 'i'), defined('r', 0, 'i')], 'd(a[i], a[r(0, i)])'),
      ([defined('l', 0, 'i'), defined('r', 0, 'i')], 'min(d(a[i], a[l(0, i)]), d(a[i], a[r(0, i)]))')
     ]
