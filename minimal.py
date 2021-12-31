@@ -9,6 +9,9 @@ def print_dp(dpspec, filename, test_cases):
 
     surrounding = ''
     surrounding += 'import math\n\n'
+
+    surrounding += 'class Solution(object):\n'
+    surrounding += '  def {0}(a):\n    return None\n\n'.format(dpspec.name)
     for bf in dpspec.base_cases:
         surrounding += bf + '\n'
     surrounding += dpspec.f + '\n\n'
@@ -51,11 +54,12 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '\n\n'
     for case in test_cases:
         surrounding += 'assert(driver({0}) == {1})\n'.format(case[0], case[1])
-    open(filename, 'w').write(surrounding) # rint(surrounding)
+    open(filename, 'w').write(surrounding)
 
 class DPSpec:
 
-    def __init__(self, base_cases, f):
+    def __init__(self, name, base_cases, f):
+        self.name = name
         self.base_cases = base_cases
         self.f = f
 
@@ -63,6 +67,6 @@ class DPSpec:
         return len(self.base_cases) - 1
 
 test_cases = [([], 0), ([1], 0), ([0, 200], 200)]
-print_dp(DPSpec(['def B_0(a): return 0', 'def B_1(a): return 0'], 'def f(v0, v1): return abs(v0 - v1)'), 'dp.py', test_cases)
+print_dp(DPSpec('maxAbs', ['def B_0(a): return 0', 'def B_1(a): return 0'], 'def f(v0, v1): return abs(v0 - v1)'), 'dp.py', test_cases)
 run_cmd('python dp.py')
 
