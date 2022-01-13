@@ -26,7 +26,7 @@ def print_dp(dpspec, filename, test_cases):
     dpvars = ''
     vs = ''
     for i in range(M):
-        surrounding += '    ' + ('  ' * i) + 'for i{} in range(1, len(a)):\n'.format(i)
+        surrounding += '      ' + ('  ' * i) + 'for i{} in range(1, len(a)):\n'.format(i)
         dpvars += 'a[i{}]'.format(i)
         vs += 'v{}'.format(i)
 
@@ -34,7 +34,7 @@ def print_dp(dpspec, filename, test_cases):
     for i in range(0, M - 1):
         recargs += ' v{}'.format(i)
     surrounding += '      ' + ('  ' * M) + 'mx = max(mx, self.DP(a[:i{0}], {1}))'.format(M - 1, dpvars) + '\n'
-    surrounding += '    return mx\n'
+    surrounding += '      return mx\n'
     surrounding += '\n'
 
     surrounding += '  def DP(self, v, {0}):'.format(vs) + '\n'
@@ -43,7 +43,7 @@ def print_dp(dpspec, filename, test_cases):
         aargs.append('v[{}]'.format(i))
     aargs.append('v0')
     surrounding += '    if len(v) == ' + str(M) + ':\n'
-    surrounding += '      return f({})\n'.format(', '.join(aargs))
+    surrounding += '      return B_0([]) + B_1(v) + f({})\n'.format(', '.join(aargs))
     surrounding += '    if len(v) > 1:\n'
     surrounding += '      mx = NEG_INF\n'
     surrounding += '      for e in range(1, len(v)):\n'
@@ -68,4 +68,13 @@ class DPSpec:
 test_cases = [([], 0), ([1], 0), ([0, 200], 200)]
 print_dp(DPSpec('maxAbs', ['def B_0(a): return 0', 'def B_1(a): return 0'], 'def f(v0, v1): return abs(v0 - v1)'), 'dp.py', test_cases)
 run_cmd('python dp.py')
+
+test_cases = [([-1, 2], 2)]
+lis_base_cases = ['def B_0(a): return 0', 'def B_1(a): return 1']
+lis = DPSpec('lis', lis_base_cases, 'def f(v0, v1): return 1 if v0 < v1 else NEG_INF')
+print_dp(lis, 'lis.py', test_cases)
+run_cmd('python lis.py')
+
+
+
 
