@@ -43,12 +43,12 @@ def print_dp(dpspec, filename, test_cases):
         aargs.append('{}'.format(i))
     aargs.append('v0')
     surrounding += '    if v + 1 == ' + str(M) + ':\n'
-    surrounding += '      return max(B_0([]) + B_1([v0]), B_0([]) + B_1(v) + f(a, {}))\n'.format(', '.join(aargs))
+    surrounding += '      return max(B_0([]) + B_1([v0]), B_0([]) + B_1(v) + f(a, v, v0))\n'
     surrounding += '    if v + 1 > 1:\n'
     surrounding += '      mx = 0\n'
-    surrounding += '      for e in range(v):\n'
+    surrounding += '      for e in range(v + 1):\n'
     surrounding += '        mx = max(mx, B_0([]) + B_1([e]) + f(a, e, v0))\n'
-    surrounding += '      for e in range(1, v):\n'
+    surrounding += '      for e in range(1, v + 1):\n'
     surrounding += '        mx = max(mx, self.DP(a, e - 1, {1}) + f(a, e, {2}))'.format(vs, recargs, vs) + '\n\n'
     surrounding += '      return mx\n'
 
