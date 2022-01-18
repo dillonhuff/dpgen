@@ -23,6 +23,7 @@ def print_dp(dpspec, filename, test_cases):
 
     surrounding += '    if len(a) > ' + str(M) + ':\n'
     surrounding += '      mx = NEG_INF\n'
+    surrounding += '      memo = {}\n'
     dpvars = ''
     vs = ''
     for i in range(M):
@@ -33,11 +34,13 @@ def print_dp(dpspec, filename, test_cases):
     recargs = 'e'
     for i in range(0, M - 1):
         recargs += ' v{}'.format(i)
-    surrounding += '      ' + ('  ' * M) + 'mx = max(mx, self.DP(a, {1}))'.format(M - 1, dpvars) + '\n'
+    surrounding += '      ' + ('  ' * M) + 'mx = max(mx, self.DP(a, {1}, memo))'.format(M - 1, dpvars) + '\n'
     surrounding += '      return mx\n'
     surrounding += '\n'
 
-    surrounding += '  def DP(self, a, {0}):'.format(vs) + '\n'
+    surrounding += '  def DP(self, a, {0}, memo):'.format(vs) + '\n'
+    surrounding += '    if {0} in memo:\n'.format(vs)
+    surrounding += '      return memo[{0}]\n'.format(vs)
     surrounding += '    v = {0} - 1\n'.format(vs)
     aargs = []
     for i in range(0, M):
@@ -50,7 +53,8 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '      for e in range(v + 1):\n'
     surrounding += '        mx = max(mx, B_0([]) + B_1([e]) + f(a, e, v0))\n'
     surrounding += '      for e in range(1, v + 1):\n'
-    surrounding += '        mx = max(mx, self.DP(a, {1}) + f(a, e, {2}))'.format(vs, recargs, vs) + '\n\n'
+    surrounding += '        mx = max(mx, self.DP(a, {1}, memo) + f(a, e, {2}))'.format(vs, recargs, vs) + '\n\n'
+    surrounding += '      memo[v0] = mx\n'
     surrounding += '      return mx\n'
 
     surrounding += '\n\n'
