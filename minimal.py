@@ -61,7 +61,11 @@ def print_dp(dpspec, filename, test_cases):
 
     surrounding += '\n\n'
     for case in test_cases:
-        surrounding += 'assert(Solution().{2}({0} {3}) == {1})\n'.format(case[0], case[1], dpspec.name, paramstr)
+        print('case =', case)
+        if isinstance(case[0], tuple):
+            surrounding += 'assert(Solution().{2}({0}, {3}) == {1})\n'.format(case[0][0], case[1], dpspec.name, case[0][1])
+        else:
+            surrounding += 'assert(Solution().{2}({0}) == {1})\n'.format(case[0], case[1], dpspec.name)
     open(filename, 'w').write(surrounding)
 
 class DPSpec:
@@ -86,7 +90,7 @@ print_dp(lis, 'lengthOfLIS.py', test_cases)
 run_cmd('python lengthOfLIS.py')
 
 name = 'constrainedSubsetSum'
-test_cases = [([1], 1)]
+test_cases = [(([1], 1), 1)]
 lis_base_cases = ['def B_0(a): return 0', 'def B_1(a): return 1']
 lis = DPSpec(name, lis_base_cases, 'def f(a, v0, v1, k): return 1 if a[v0] < a[v1] else NEG_INF', ['k'])
 print_dp(lis, name + '.py', test_cases)
