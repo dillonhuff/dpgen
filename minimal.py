@@ -61,7 +61,6 @@ def print_dp(dpspec, filename, test_cases):
 
     surrounding += '\n\n'
     for case in test_cases:
-        print('case =', case)
         if isinstance(case[0], tuple):
             surrounding += 'assert(Solution().{2}({0}, {3}) == {1})\n'.format(case[0][0], case[1], dpspec.name, case[0][1])
         else:
@@ -78,6 +77,10 @@ class DPSpec:
 
     def M(self):
         return len(self.base_cases) - 1
+
+    def callf(self, a, b):
+        paramstr = '' if len(self.parameters) == 0 else ', ' + ', '.join(self.parameters)
+        return 'f(a, {0}, {1} {2})'.format(a, b, paramstr)
 
 test_cases = [([], 0), ([1], 0), ([0, 200], 200)]
 print_dp(DPSpec('maxAbs', ['def B_0(a): return 0', 'def B_1(a): return 0'], 'def f(a, v0, v1): return abs(a[v0] - a[v1])'), 'dp.py', test_cases)
