@@ -53,9 +53,9 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '\n'
 
     surrounding += '  def DP(self, a, {0}, memo {1}):'.format(vs, paramstr) + '\n'
+    surrounding += '    if ({0} {1}) in memo:\n'.format(vs, paramstr)
+    surrounding += '      return memo[({0} {1})]\n'.format(vs, paramstr)
     if dpspec.fixed_length:
-        surrounding += '    if ({0} {1}) in memo:\n'.format(vs, paramstr)
-        surrounding += '      return memo[({0} {1})]\n'.format(vs, paramstr)
         aargs = []
         aargs.append('{}'.format(0))
         aargs.append('v0')
@@ -66,11 +66,9 @@ def print_dp(dpspec, filename, test_cases):
         surrounding += '    else:\n'
         surrounding += '      for e in range(k, v0):\n'
         surrounding += '        mx = {5}(mx, {4} + self.DP(a, {1}, memo {3} - 1))'.format(vs, 'e', vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
-        surrounding += '    memo[(v0 {})] = mx\n'.format(paramstr)
-        surrounding += '    return mx\n'
     else:
-        surrounding += '    if {0} in memo:\n'.format(vs)
-        surrounding += '      return memo[{0}]\n'.format(vs)
+        # surrounding += '    if {0} in memo:\n'.format(vs)
+        # surrounding += '      return memo[{0}]\n'.format(vs)
         aargs = []
         aargs.append('{}'.format(0))
         aargs.append('v0')
@@ -79,8 +77,8 @@ def print_dp(dpspec, filename, test_cases):
         surrounding += '      mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callf('e', 'v0'), dpspec.direction())
         surrounding += '    for e in range(1, v0):\n'
         surrounding += '      mx = {5}(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, 'e', vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
-        surrounding += '    memo[v0] = mx\n'
-        surrounding += '    return mx\n'
+    surrounding += '    memo[(v0 {})] = mx\n'.format(paramstr)
+    surrounding += '    return mx\n'
 
     surrounding += '\n\n'
     for case in test_cases:
