@@ -118,9 +118,10 @@ print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
 name = 'postOffice'
-test_cases = [(([], 0), 0), (([1, 2, 3, 4, 5], 1), 6)] # , (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
+test_cases = [(([], 0), 0), (([1, 2, 3, 4, 5], 1), 6), (([1, 2, 3, 6, 7, 9, 11, 22, 44, 50], 5), 9)] # , (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
 lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return a[e]']
-lis = DPSpec(name, lis_base_cases, 'def L(a, v): return sum(map(lambda x: a[v] - x, a[0:v]))', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', 'def R(a, v): return sum(map(lambda x: x - a[v], a[v+1:]))', parameters=['k'], maximize=False, fixed_length=True)
+M = 'def M(a, v0, v1, k): return sum(map(lambda x: min(abs(a[v0] - x), abs(a[v1] - x)), a[v0:v1-1]))'
+lis = DPSpec(name, lis_base_cases, 'def L(a, v): return sum(map(lambda x: a[v] - x, a[0:v]))', M, 'def R(a, v): return sum(map(lambda x: x - a[v], a[v+1:]))', parameters=['k'], maximize=False, fixed_length=True)
 print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
