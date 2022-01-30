@@ -30,16 +30,26 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '    if len(a) > ' + str(M) + ':\n'
     surrounding += '      mx = {}\n'.format(dpspec.worst())
     surrounding += '      memo = {}\n'
-    surrounding += '      for i in range(len(a)):\n'
-    surrounding += '        mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
-    dpvars = ''
-    vs = ''
-    surrounding += '      ' + ('  ' * 0) + 'for i{} in range(1, len(a)):\n'.format(0)
-    dpvars += 'i{}'.format(0)
-    vs += 'v{}'.format(0)
+    if dpspec.fixed_length:
+        surrounding += '      if k == 1:\n'
+        surrounding += '        for i in range(len(a)):\n'
+        surrounding += '          mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
+        surrounding += '      else:\n'
+        surrounding += '        ' + ('  ' * 0) + 'for i{} in range(1, len(a)):\n'.format(0)
+        dpvars = 'i{}'.format(0)
+        vs = 'v{}'.format(0)
 
-    surrounding += '      ' + ('  ' * M) + 'mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(M - 1, dpvars, paramstr, dpspec.direction()) + '\n'
-    surrounding += '      return mx\n'
+        surrounding += '        ' + ('  ' * M) + 'mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(M - 1, dpvars, paramstr, dpspec.direction()) + '\n'
+        surrounding += '      return mx\n'
+    else:
+        surrounding += '      for i in range(len(a)):\n'
+        surrounding += '        mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
+        surrounding += '      ' + ('  ' * 0) + 'for i{} in range(1, len(a)):\n'.format(0)
+        dpvars = 'i{}'.format(0)
+        vs = 'v{}'.format(0)
+
+        surrounding += '      ' + ('  ' * M) + 'mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(M - 1, dpvars, paramstr, dpspec.direction()) + '\n'
+        surrounding += '      return mx\n'
     surrounding += '\n'
 
     surrounding += '  def DP(self, a, {0}, memo {1}):'.format(vs, paramstr) + '\n'
@@ -110,7 +120,7 @@ run_cmd('python ' + name + '.py')
 name = 'postOffice'
 test_cases = [(([], 0), 0), (([1, 2, 3, 4, 5], 1), 6)] # , (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
 lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return a[e]']
-lis = DPSpec(name, lis_base_cases, 'def L(a, v): return a[v]', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', 'def R(a, v): return 0', parameters=['k'], maximize=False, fixed_length=True)
+lis = DPSpec(name, lis_base_cases, 'def L(a, v): return sum(map(lambda x: a[v] - x, a[0:v]))', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', 'def R(a, v): return sum(map(lambda x: x - a[v], a[v+1:]))', parameters=['k'], maximize=False, fixed_length=True)
 print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
