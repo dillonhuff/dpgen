@@ -21,15 +21,14 @@ def print_dp(dpspec, filename, test_cases):
 
     surrounding += 'class Solution(object):\n'
 
-    lenstr = ', k' if dpspec.fixed_length else ''
-    surrounding += '  def {0}(self, a {2} {1}):\n'.format(dpspec.name, paramstr, lenstr)
+    surrounding += '  def {0}(self, a {1}):\n'.format(dpspec.name, paramstr)
     surrounding += '    if len(a) == ' + str(0) + ':\n'
     surrounding += '      return A_{}(a)'.format(0) + '\n'
     surrounding += '    if len(a) == ' + str(1) + ':\n'
     surrounding += '      return A_{}(a, 0)'.format(1) + '\n'
 
     surrounding += '    if len(a) > ' + str(M) + ':\n'
-    surrounding += '      mx = NEG_INF\n'
+    surrounding += '      mx = {}\n'.format(dpspec.worst())
     surrounding += '      memo = {}\n'
     surrounding += '      for i in range(len(a)):\n'
     surrounding += '        mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
@@ -109,9 +108,9 @@ print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
 name = 'postOffice'
-test_cases = [([], 0)] # , (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
+test_cases = [(([], 0), 0), (([1, 2, 3, 4, 5], 1), 6)] # , (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
 lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return a[e]']
-lis = DPSpec(name, lis_base_cases, 'def L(a, v): return a[v]', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', 'def R(a, v): return 0', parameters=[], maximize=False, fixed_length=True)
+lis = DPSpec(name, lis_base_cases, 'def L(a, v): return a[v]', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', 'def R(a, v): return 0', parameters=['k'], maximize=False, fixed_length=True)
 print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
