@@ -47,14 +47,14 @@ def print_dp(dpspec, filename, test_cases):
     aargs = []
     aargs.append('{}'.format(0))
     aargs.append('v0')
-    surrounding += '    if v + 1 == ' + str(M) + ':\n'
+    surrounding += '    if v0 == ' + str(M) + ':\n'
     surrounding += '      return B_0([]) + B_1(a, v) + {}\n'.format(dpspec.callf('v', 'v0'))
-    surrounding += '    if v + 1 > 1:\n'
+    surrounding += '    if v0 > 1:\n'
     surrounding += '      mx = NEG_INF\n'
-    surrounding += '      for e in range(v + 1):\n'
+    surrounding += '      for e in range(v0):\n'
     surrounding += '        mx = max(mx, B_0([]) + B_1(a, e) + {})\n'.format(dpspec.callf('e', 'v0'))
-    surrounding += '      for e in range(1, v + 1):\n'
-    surrounding += '        mx = max(mx, self.DP(a, {1}, memo {3}) + {4})'.format(vs, recargs, vs, paramstr, dpspec.callf('e', vs)) + '\n\n'
+    surrounding += '      for e in range(1, v0):\n'
+    surrounding += '        mx = max(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, recargs, vs, paramstr, dpspec.callf('e', vs)) + '\n\n'
     surrounding += '      memo[v0] = mx\n'
     surrounding += '      return mx\n'
 
