@@ -27,6 +27,8 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '    if len(a) > ' + str(M) + ':\n'
     surrounding += '      mx = NEG_INF\n'
     surrounding += '      memo = {}\n'
+    surrounding += '      for i in range(len(a)):\n'
+    surrounding += '        mx = max(mx, B_0(a) + B_1(a, i))\n'
     dpvars = ''
     vs = ''
     surrounding += '      ' + ('  ' * 0) + 'for i{} in range(1, len(a)):\n'.format(0)
