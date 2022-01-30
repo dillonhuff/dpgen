@@ -21,7 +21,8 @@ def print_dp(dpspec, filename, test_cases):
 
     surrounding += 'class Solution(object):\n'
 
-    surrounding += '  def {0}(self, a {1}):\n'.format(dpspec.name, paramstr)
+    lenstr = ', k' if dpspec.fixed_length else ''
+    surrounding += '  def {0}(self, a {2} {1}):\n'.format(dpspec.name, paramstr, lenstr)
     surrounding += '    if len(a) == ' + str(0) + ':\n'
     surrounding += '      return A_{}(a)'.format(0) + '\n'
     surrounding += '    if len(a) == ' + str(1) + ':\n'
@@ -31,15 +32,14 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '      mx = NEG_INF\n'
     surrounding += '      memo = {}\n'
     surrounding += '      for i in range(len(a)):\n'
-    surrounding += '        mx = max(mx, L(a, i) + R(a, i))\n'
+    surrounding += '        mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
     dpvars = ''
     vs = ''
     surrounding += '      ' + ('  ' * 0) + 'for i{} in range(1, len(a)):\n'.format(0)
     dpvars += 'i{}'.format(0)
     vs += 'v{}'.format(0)
 
-    recargs = 'e'
-    surrounding += '      ' + ('  ' * M) + 'mx = max(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(M - 1, dpvars, paramstr) + '\n'
+    surrounding += '      ' + ('  ' * M) + 'mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(M - 1, dpvars, paramstr, dpspec.direction()) + '\n'
     surrounding += '      return mx\n'
     surrounding += '\n'
 
@@ -53,7 +53,7 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '    for e in range(v0):\n'
     surrounding += '      mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callf('e', 'v0'), dpspec.direction())
     surrounding += '    for e in range(1, v0):\n'
-    surrounding += '      mx = {5}(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, recargs, vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
+    surrounding += '      mx = {5}(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, 'e', vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
     surrounding += '    memo[v0] = mx\n'
     surrounding += '    return mx\n'
 
@@ -67,7 +67,7 @@ def print_dp(dpspec, filename, test_cases):
 
 class DPSpec:
 
-    def __init__(self, name, base_cases, L, f, R, parameters=[], maximize=True):
+    def __init__(self, name, base_cases, L, f, R, parameters=[], maximize=True, fixed_length=False):
         self.name = name
         self.base_cases = base_cases
         self.L = L
@@ -75,6 +75,7 @@ class DPSpec:
         self.R = R
         self.parameters = parameters
         self.maximize = maximize
+        self.fixed_length = fixed_length;
 
     def worst(self):
         return 'NEG_INF' if self.maximize else 'INF'
@@ -108,9 +109,9 @@ print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
 name = 'postOffice'
-test_cases = [(([1], 1), 1), (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
+test_cases = [([], 0)] # , (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
 lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return a[e]']
-lis = DPSpec(name, lis_base_cases, 'def L(a, v): return a[v]', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', 'def R(a, v): return 0', ['k'], maximize=False)
+lis = DPSpec(name, lis_base_cases, 'def L(a, v): return a[v]', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', 'def R(a, v): return 0', parameters=[], maximize=False, fixed_length=True)
 print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
