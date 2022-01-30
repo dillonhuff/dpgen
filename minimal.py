@@ -10,6 +10,7 @@ def print_dp(dpspec, filename, test_cases):
     surrounding = ''
     surrounding += 'import math\n\n'
     surrounding += 'NEG_INF = -1000000000\n\n'
+    surrounding += 'INF = 1000000000\n\n'
     for bf in dpspec.base_cases:
         surrounding += bf + '\n'
     surrounding += dpspec.L + '\n'
@@ -48,11 +49,11 @@ def print_dp(dpspec, filename, test_cases):
     aargs = []
     aargs.append('{}'.format(0))
     aargs.append('v0')
-    surrounding += '    mx = NEG_INF\n'
+    surrounding += '    mx = {}\n'.format(dpspec.worst())
     surrounding += '    for e in range(v0):\n'
-    surrounding += '      mx = max(mx, L(a, e) + {})\n'.format(dpspec.callf('e', 'v0'))
+    surrounding += '      mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callf('e', 'v0'), dpspec.direction())
     surrounding += '    for e in range(1, v0):\n'
-    surrounding += '      mx = max(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, recargs, vs, paramstr, dpspec.callf('e', vs)) + '\n\n'
+    surrounding += '      mx = {5}(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, recargs, vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
     surrounding += '    memo[v0] = mx\n'
     surrounding += '    return mx\n'
 
@@ -66,13 +67,20 @@ def print_dp(dpspec, filename, test_cases):
 
 class DPSpec:
 
-    def __init__(self, name, base_cases, L, f, R, parameters=[]):
+    def __init__(self, name, base_cases, L, f, R, parameters=[], maximize=True):
         self.name = name
         self.base_cases = base_cases
         self.L = L
         self.f = f
         self.R = R
         self.parameters = parameters
+        self.maximize = maximize
+
+    def worst(self):
+        return 'NEG_INF' if self.maximize else 'INF'
+
+    def direction(self):
+        return 'max' if self.maximize else 'min'
 
     def M(self):
         return len(self.base_cases) - 1
@@ -96,6 +104,13 @@ test_cases = [(([1], 1), 1), (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([
 
 lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return a[e]']
 lis = DPSpec(name, lis_base_cases, 'def L(a, v): return a[v]', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', 'def R(a, v): return 0', ['k']) 
+print_dp(lis, name + '.py', test_cases)
+run_cmd('python ' + name + '.py')
+
+name = 'postOffice'
+test_cases = [(([1], 1), 1), (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
+lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return a[e]']
+lis = DPSpec(name, lis_base_cases, 'def L(a, v): return a[v]', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', 'def R(a, v): return 0', ['k'], maximize=False)
 print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
