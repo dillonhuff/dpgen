@@ -49,7 +49,7 @@ def print_dp(dpspec, filename, test_cases):
     aargs.append('{}'.format(0))
     aargs.append('v0')
     surrounding += '    if v0 == ' + str(M) + ':\n'
-    surrounding += '      return A_0([]) + A_1(a, v0 - 1) + {}\n'.format(dpspec.callf('v0 - 1', 'v0'))
+    surrounding += '      return L(a, v0 - 1) + {}\n'.format(dpspec.callf('v0 - 1', 'v0'))
     surrounding += '    if v0 > 1:\n'
     surrounding += '      mx = NEG_INF\n'
     surrounding += '      for e in range(v0):\n'
@@ -85,7 +85,7 @@ class DPSpec:
         return 'M(a, {0}, {1} {2})'.format(a, b, paramstr)
 
 test_cases = [([], 0), ([1], 0), ([0, 200], 200)]
-print_dp(DPSpec('maxAbs', ['def A_0(a): return 0', 'def A_1(a, e): return 0'], 'def L(a, v): return 1', 'def M(a, v0, v1): return abs(a[v0] - a[v1])', ''), 'dp.py', test_cases)
+print_dp(DPSpec('maxAbs', ['def A_0(a): return 0', 'def A_1(a, e): return 0'], 'def L(a, v): return 0', 'def M(a, v0, v1): return abs(a[v0] - a[v1])', ''), 'dp.py', test_cases)
 run_cmd('python dp.py')
 
 test_cases = [([1, 0], 1), ([-1, 2], 2), ([10,9,2,5,3,7,101,18], 4), ([2,15,3,7,8,6,18], 5)]
