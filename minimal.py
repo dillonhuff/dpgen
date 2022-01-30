@@ -47,11 +47,9 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '      return memo[{0}]\n'.format(vs)
     surrounding += '    v = {0} - 1\n'.format(vs)
     aargs = []
-    for i in range(0, M):
-        aargs.append('{}'.format(i))
+    aargs.append('{}'.format(0))
     aargs.append('v0')
     surrounding += '    if v + 1 == ' + str(M) + ':\n'
-    # surrounding += '      return max(B_0([]) + B_1(a, v0), B_0([]) + B_1(a, v) + {})\n'.format(dpspec.callf('v', 'v0'))
     surrounding += '      return B_0([]) + B_1(a, v) + {}\n'.format(dpspec.callf('v', 'v0'))
     surrounding += '    if v + 1 > 1:\n'
     surrounding += '      mx = NEG_INF\n'
@@ -99,7 +97,7 @@ name = 'constrainedSubsetSum'
 test_cases = [(([1], 1), 1), (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
 
 lis_base_cases = ['def B_0(a): return 0', 'def B_1(a, e): return a[e]']
-lis = DPSpec(name, lis_base_cases, 'def f(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', ['k']) # return 1 if a[v0] < a[v1] else NEG_INF', ['k'])
+lis = DPSpec(name, lis_base_cases, 'def f(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', ['k']) 
 print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
