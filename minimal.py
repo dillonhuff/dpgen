@@ -29,7 +29,7 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '      mx = NEG_INF\n'
     surrounding += '      memo = {}\n'
     surrounding += '      for i in range(len(a)):\n'
-    surrounding += '        mx = max(mx, L(a, i))\n' # A_0(a) + A_1(a, i))\n'
+    surrounding += '        mx = max(mx, L(a, i))\n'
     dpvars = ''
     vs = ''
     surrounding += '      ' + ('  ' * 0) + 'for i{} in range(1, len(a)):\n'.format(0)
@@ -53,7 +53,7 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '    if v0 > 1:\n'
     surrounding += '      mx = NEG_INF\n'
     surrounding += '      for e in range(v0):\n'
-    surrounding += '        mx = max(mx, A_0([]) + A_1(a, e) + {})\n'.format(dpspec.callf('e', 'v0'))
+    surrounding += '        mx = max(mx, L(a, e) + {})\n'.format(dpspec.callf('e', 'v0'))
     surrounding += '      for e in range(1, v0):\n'
     surrounding += '        mx = max(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, recargs, vs, paramstr, dpspec.callf('e', vs)) + '\n\n'
     surrounding += '      memo[v0] = mx\n'
