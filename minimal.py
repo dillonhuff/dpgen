@@ -48,9 +48,9 @@ def print_dp(dpspec, filename, test_cases):
     aargs = []
     aargs.append('{}'.format(0))
     aargs.append('v0')
-    surrounding += '    if v0 == ' + str(M) + ':\n'
-    surrounding += '      return L(a, v0 - 1) + {}\n'.format(dpspec.callf('v0 - 1', 'v0'))
-    surrounding += '    if v0 > 1:\n'
+    # surrounding += '    if v0 == ' + str(M) + ':\n'
+    # surrounding += '      return L(a, v0 - 1) + {}\n'.format(dpspec.callf('v0 - 1', 'v0'))
+    surrounding += '    if True:\n' # v0 > 1:\n'
     surrounding += '      mx = NEG_INF\n'
     surrounding += '      for e in range(v0):\n'
     surrounding += '        mx = max(mx, L(a, e) + {})\n'.format(dpspec.callf('e', 'v0'))
