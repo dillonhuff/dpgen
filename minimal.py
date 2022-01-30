@@ -43,12 +43,12 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '  def DP(self, a, {0}, memo {1}):'.format(vs, paramstr) + '\n'
     surrounding += '    if {0} in memo:\n'.format(vs)
     surrounding += '      return memo[{0}]\n'.format(vs)
-    surrounding += '    v = {0} - 1\n'.format(vs)
+    # surrounding += '    v = {0} - 1\n'.format(vs)
     aargs = []
     aargs.append('{}'.format(0))
     aargs.append('v0')
     surrounding += '    if v0 == ' + str(M) + ':\n'
-    surrounding += '      return B_0([]) + B_1(a, v) + {}\n'.format(dpspec.callf('v', 'v0'))
+    surrounding += '      return B_0([]) + B_1(a, v0 - 1) + {}\n'.format(dpspec.callf('v0 - 1', 'v0'))
     surrounding += '    if v0 > 1:\n'
     surrounding += '      mx = NEG_INF\n'
     surrounding += '      for e in range(v0):\n'
