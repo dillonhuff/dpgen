@@ -53,18 +53,34 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '\n'
 
     surrounding += '  def DP(self, a, {0}, memo {1}):'.format(vs, paramstr) + '\n'
-    surrounding += '    if {0} in memo:\n'.format(vs)
-    surrounding += '      return memo[{0}]\n'.format(vs)
-    aargs = []
-    aargs.append('{}'.format(0))
-    aargs.append('v0')
-    surrounding += '    mx = {}\n'.format(dpspec.worst())
-    surrounding += '    for e in range(v0):\n'
-    surrounding += '      mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callf('e', 'v0'), dpspec.direction())
-    surrounding += '    for e in range(1, v0):\n'
-    surrounding += '      mx = {5}(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, 'e', vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
-    surrounding += '    memo[v0] = mx\n'
-    surrounding += '    return mx\n'
+    if dpspec.fixed_length:
+        surrounding += '    if ({0} {1}) in memo:\n'.format(vs, paramstr)
+        surrounding += '      return memo[({0} {1})]\n'.format(vs, paramstr)
+        aargs = []
+        aargs.append('{}'.format(0))
+        aargs.append('v0')
+        surrounding += '    mx = {}\n'.format(dpspec.worst())
+        surrounding += '    if k == 2:\n'
+        surrounding += '      for e in range(v0):\n'
+        surrounding += '        mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callf('e', 'v0'), dpspec.direction())
+        surrounding += '    else:\n'
+        surrounding += '      for e in range(k, v0):\n'
+        surrounding += '        mx = {5}(mx, {4} + self.DP(a, {1}, memo {3} - 1))'.format(vs, 'e', vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
+        surrounding += '    memo[(v0 {})] = mx\n'.format(paramstr)
+        surrounding += '    return mx\n'
+    else:
+        surrounding += '    if {0} in memo:\n'.format(vs)
+        surrounding += '      return memo[{0}]\n'.format(vs)
+        aargs = []
+        aargs.append('{}'.format(0))
+        aargs.append('v0')
+        surrounding += '    mx = {}\n'.format(dpspec.worst())
+        surrounding += '    for e in range(v0):\n'
+        surrounding += '      mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callf('e', 'v0'), dpspec.direction())
+        surrounding += '    for e in range(1, v0):\n'
+        surrounding += '      mx = {5}(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, 'e', vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
+        surrounding += '    memo[v0] = mx\n'
+        surrounding += '    return mx\n'
 
     surrounding += '\n\n'
     for case in test_cases:
@@ -120,7 +136,7 @@ run_cmd('python ' + name + '.py')
 name = 'postOffice'
 test_cases = [(([], 0), 0), (([1, 2, 3, 4, 5], 1), 6), (([1, 2, 3, 6, 7, 9, 11, 22, 44, 50], 5), 9)] # , (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
 lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return a[e]']
-M = 'def M(a, v0, v1, k): return sum(map(lambda x: min(abs(a[v0] - x), abs(a[v1] - x)), a[v0:v1-1]))'
+M = 'def M(a, v0, v1, k): return sum(map(lambda x: min(abs(a[v0] - x), abs(a[v1] - x)), a[v0:v1]))'
 lis = DPSpec(name, lis_base_cases, 'def L(a, v): return sum(map(lambda x: a[v] - x, a[0:v]))', M, 'def R(a, v): return sum(map(lambda x: x - a[v], a[v+1:]))', parameters=['k'], maximize=False, fixed_length=True)
 print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
