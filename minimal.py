@@ -55,10 +55,10 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '  def DP(self, a, {0}, memo {1}):'.format(vs, paramstr) + '\n'
     surrounding += '    if ({0} {1}) in memo:\n'.format(vs, paramstr)
     surrounding += '      return memo[({0} {1})]\n'.format(vs, paramstr)
+    aargs = []
+    aargs.append('{}'.format(0))
+    aargs.append('v0')
     if dpspec.fixed_length:
-        aargs = []
-        aargs.append('{}'.format(0))
-        aargs.append('v0')
         surrounding += '    mx = {}\n'.format(dpspec.worst())
         surrounding += '    if k == 2:\n'
         surrounding += '      for e in range(v0):\n'
@@ -67,11 +67,6 @@ def print_dp(dpspec, filename, test_cases):
         surrounding += '      for e in range(k, v0):\n'
         surrounding += '        mx = {5}(mx, {4} + self.DP(a, {1}, memo {3} - 1))'.format(vs, 'e', vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
     else:
-        # surrounding += '    if {0} in memo:\n'.format(vs)
-        # surrounding += '      return memo[{0}]\n'.format(vs)
-        aargs = []
-        aargs.append('{}'.format(0))
-        aargs.append('v0')
         surrounding += '    mx = {}\n'.format(dpspec.worst())
         surrounding += '    for e in range(v0):\n'
         surrounding += '      mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callf('e', 'v0'), dpspec.direction())
