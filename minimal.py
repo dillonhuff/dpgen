@@ -96,7 +96,7 @@ print_dp(lis, 'lengthOfLIS.py', test_cases)
 run_cmd('python lengthOfLIS.py')
 
 name = 'constrainedSubsetSum'
-test_cases = [(([1], 1), 1), (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12)] # , (([-1,-2,-3], 1), -1)]
+test_cases = [(([1], 1), 1), (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
 
 lis_base_cases = ['def B_0(a): return 0', 'def B_1(a, e): return a[e]']
 lis = DPSpec(name, lis_base_cases, 'def f(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', ['k']) # return 1 if a[v0] < a[v1] else NEG_INF', ['k'])
