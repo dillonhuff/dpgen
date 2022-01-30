@@ -12,6 +12,7 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += 'NEG_INF = -1000000000\n\n'
     for bf in dpspec.base_cases:
         surrounding += bf + '\n'
+    surrounding += dpspec.L + '\n'
     surrounding += dpspec.f + '\n\n'
 
     paramstr = '' if len(dpspec.parameters) == 0 else ', ' + ', '.join(dpspec.parameters)
@@ -28,7 +29,7 @@ def print_dp(dpspec, filename, test_cases):
     surrounding += '      mx = NEG_INF\n'
     surrounding += '      memo = {}\n'
     surrounding += '      for i in range(len(a)):\n'
-    surrounding += '        mx = max(mx, A_0(a) + A_1(a, i))\n'
+    surrounding += '        mx = max(mx, L(a, i))\n' # A_0(a) + A_1(a, i))\n'
     dpvars = ''
     vs = ''
     surrounding += '      ' + ('  ' * 0) + 'for i{} in range(1, len(a)):\n'.format(0)
@@ -71,7 +72,9 @@ class DPSpec:
     def __init__(self, name, base_cases, L, f, R, parameters=[]):
         self.name = name
         self.base_cases = base_cases
+        self.L = L
         self.f = f
+        self.R = R
         self.parameters = parameters
 
     def M(self):
@@ -82,12 +85,12 @@ class DPSpec:
         return 'M(a, {0}, {1} {2})'.format(a, b, paramstr)
 
 test_cases = [([], 0), ([1], 0), ([0, 200], 200)]
-print_dp(DPSpec('maxAbs', ['def A_0(a): return 0', 'def A_1(a, e): return 0'], '', 'def M(a, v0, v1): return abs(a[v0] - a[v1])', ''), 'dp.py', test_cases)
+print_dp(DPSpec('maxAbs', ['def A_0(a): return 0', 'def A_1(a, e): return 0'], 'def L(a, v): return 1', 'def M(a, v0, v1): return abs(a[v0] - a[v1])', ''), 'dp.py', test_cases)
 run_cmd('python dp.py')
 
 test_cases = [([1, 0], 1), ([-1, 2], 2), ([10,9,2,5,3,7,101,18], 4), ([2,15,3,7,8,6,18], 5)]
 lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return 1']
-lis = DPSpec('lengthOfLIS', lis_base_cases, '', 'def M(a, v0, v1): return 1 if a[v0] < a[v1] else NEG_INF', '')
+lis = DPSpec('lengthOfLIS', lis_base_cases, 'def L(a, v): return 1', 'def M(a, v0, v1): return 1 if a[v0] < a[v1] else NEG_INF', '')
 print_dp(lis, 'lengthOfLIS.py', test_cases)
 run_cmd('python lengthOfLIS.py')
 
@@ -95,7 +98,7 @@ name = 'constrainedSubsetSum'
 test_cases = [(([1], 1), 1), (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
 
 lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return a[e]']
-lis = DPSpec(name, lis_base_cases, '', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', '', ['k']) 
+lis = DPSpec(name, lis_base_cases, 'def L(a, v): return a[v]', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', '', ['k']) 
 print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
