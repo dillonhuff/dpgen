@@ -36,8 +36,6 @@ def print_dp(dpspec, filename, test_cases):
     vs += 'v{}'.format(0)
 
     recargs = 'e'
-    for i in range(0, M - 1):
-        recargs += ' v{}'.format(i)
     surrounding += '      ' + ('  ' * M) + 'mx = max(mx, self.DP(a, {1}, memo {2}))'.format(M - 1, dpvars, paramstr) + '\n'
     surrounding += '      return mx\n'
     surrounding += '\n'
