@@ -1,88 +1,5 @@
 import os
 
-def run_cmd(cmd):
-    res = os.system(cmd)
-    assert(res == 0)
-
-def print_dp(dpspec, filename, test_cases):
-    M = dpspec.M()
-
-    surrounding = ''
-    surrounding += 'import math\n\n'
-    surrounding += 'NEG_INF = -1000000000\n\n'
-    surrounding += 'INF = 1000000000\n\n'
-    for bf in dpspec.base_cases:
-        surrounding += bf + '\n'
-    surrounding += dpspec.L + '\n'
-    surrounding += dpspec.f + '\n'
-    surrounding += dpspec.R + '\n\n'
-
-    paramstr = '' if len(dpspec.parameters) == 0 else ', ' + ', '.join(dpspec.parameters)
-
-    surrounding += 'class Solution(object):\n'
-
-    surrounding += '  def {0}(self, a {1}):\n'.format(dpspec.name, paramstr)
-    surrounding += '    if len(a) == ' + str(0) + ':\n'
-    surrounding += '      return A_{}(a)'.format(0) + '\n'
-    surrounding += '    if len(a) == ' + str(1) + ':\n'
-    surrounding += '      return A_{}(a, 0)'.format(1) + '\n'
-
-    surrounding += '    if len(a) > ' + str(M) + ':\n'
-    surrounding += '      mx = {}\n'.format(dpspec.worst())
-    surrounding += '      memo = {}\n'
-    if dpspec.fixed_length:
-        surrounding += '      if k == 1:\n'
-        surrounding += '        for i in range(len(a)):\n'
-        surrounding += '          mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
-        surrounding += '      else:\n'
-        surrounding += '        ' + ('  ' * 0) + 'for i{} in range(1, len(a)):\n'.format(0)
-        dpvars = 'i{}'.format(0)
-        vs = 'v{}'.format(0)
-
-        surrounding += '        ' + ('  ' * M) + 'mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(M - 1, dpvars, paramstr, dpspec.direction()) + '\n'
-        surrounding += '      return mx\n'
-    else:
-        surrounding += '      for i in range(len(a)):\n'
-        surrounding += '        mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
-        surrounding += '      ' + ('  ' * 0) + 'for i{} in range(1, len(a)):\n'.format(0)
-        dpvars = 'i{}'.format(0)
-        vs = 'v{}'.format(0)
-
-        surrounding += '      ' + ('  ' * M) + 'mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(M - 1, dpvars, paramstr, dpspec.direction()) + '\n'
-        surrounding += '      return mx\n'
-    surrounding += '\n'
-
-    surrounding += '  def DP(self, a, {0}, memo {1}):'.format(vs, paramstr) + '\n'
-    surrounding += '    if ({0} {1}) in memo:\n'.format(vs, paramstr)
-    surrounding += '      return memo[({0} {1})]\n'.format(vs, paramstr)
-    aargs = []
-    aargs.append('{}'.format(0))
-    aargs.append('v0')
-    if dpspec.fixed_length:
-        surrounding += '    mx = {}\n'.format(dpspec.worst())
-        surrounding += '    if k == 2:\n'
-        surrounding += '      for e in range(v0):\n'
-        surrounding += '        mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callf('e', 'v0'), dpspec.direction())
-        surrounding += '    else:\n'
-        surrounding += '      for e in range(k, v0):\n'
-        surrounding += '        mx = {5}(mx, {4} + self.DP(a, {1}, memo {3} - 1))'.format(vs, 'e', vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
-    else:
-        surrounding += '    mx = {}\n'.format(dpspec.worst())
-        surrounding += '    for e in range(v0):\n'
-        surrounding += '      mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callf('e', 'v0'), dpspec.direction())
-        surrounding += '    for e in range(1, v0):\n'
-        surrounding += '      mx = {5}(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, 'e', vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
-    surrounding += '    memo[(v0 {})] = mx\n'.format(paramstr)
-    surrounding += '    return mx\n'
-
-    surrounding += '\n\n'
-    for case in test_cases:
-        if isinstance(case[0], tuple):
-            surrounding += 'assert(Solution().{2}({0}, {3}) == {1})\n'.format(case[0][0], case[1], dpspec.name, case[0][1])
-        else:
-            surrounding += 'assert(Solution().{2}({0}) == {1})\n'.format(case[0], case[1], dpspec.name)
-    open(filename, 'w').write(surrounding)
-
 class DPSpec:
 
     def __init__(self, name, base_cases, L, f, R, parameters=[], maximize=True, fixed_length=False):
@@ -107,6 +24,89 @@ class DPSpec:
     def callf(self, a, b):
         paramstr = '' if len(self.parameters) == 0 else ', ' + ', '.join(self.parameters)
         return 'M(a, {0}, {1} {2})'.format(a, b, paramstr)
+
+def print_dp(dpspec, filename, test_cases):
+    M = dpspec.M()
+
+    txt = ''
+    txt += 'import math\n\n'
+    txt += 'NEG_INF = -1000000000\n\n'
+    txt += 'INF = 1000000000\n\n'
+    for bf in dpspec.base_cases:
+        txt += bf + '\n'
+    txt += dpspec.L + '\n'
+    txt += dpspec.f + '\n'
+    txt += dpspec.R + '\n\n'
+
+    paramstr = '' if len(dpspec.parameters) == 0 else ', ' + ', '.join(dpspec.parameters)
+
+    txt += 'class Solution(object):\n'
+
+    txt += '  def {0}(self, a {1}):\n'.format(dpspec.name, paramstr)
+    txt += '    if len(a) == ' + str(0) + ':\n'
+    txt += '      return A_{}(a)'.format(0) + '\n'
+    txt += '    if len(a) == ' + str(1) + ':\n'
+    txt += '      return A_{}(a, 0)'.format(1) + '\n'
+
+    txt += '    if len(a) > ' + str(M) + ':\n'
+    txt += '      mx = {}\n'.format(dpspec.worst())
+    txt += '      memo = {}\n'
+    if dpspec.fixed_length:
+        txt += '      if k == 1:\n'
+        txt += '        for i in range(len(a)):\n'
+        txt += '          mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
+        txt += '      else:\n'
+        txt += '        ' + ('  ' * 0) + 'for i{} in range(1, len(a)):\n'.format(0)
+        dpvars = 'i{}'.format(0)
+        vs = 'v{}'.format(0)
+
+        txt += '        ' + ('  ' * M) + 'mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(M - 1, dpvars, paramstr, dpspec.direction()) + '\n'
+        txt += '      return mx\n'
+    else:
+        txt += '      for i in range(len(a)):\n'
+        txt += '        mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
+        txt += '      ' + ('  ' * 0) + 'for i{} in range(1, len(a)):\n'.format(0)
+        dpvars = 'i{}'.format(0)
+        vs = 'v{}'.format(0)
+
+        txt += '      ' + ('  ' * M) + 'mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(M - 1, dpvars, paramstr, dpspec.direction()) + '\n'
+        txt += '      return mx\n'
+    txt += '\n'
+
+    txt += '  def DP(self, a, {0}, memo {1}):'.format(vs, paramstr) + '\n'
+    txt += '    if ({0} {1}) in memo:\n'.format(vs, paramstr)
+    txt += '      return memo[({0} {1})]\n'.format(vs, paramstr)
+    aargs = []
+    aargs.append('{}'.format(0))
+    aargs.append('v0')
+    if dpspec.fixed_length:
+        txt += '    mx = {}\n'.format(dpspec.worst())
+        txt += '    if k == 2:\n'
+        txt += '      for e in range(v0):\n'
+        txt += '        mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callf('e', 'v0'), dpspec.direction())
+        txt += '    else:\n'
+        txt += '      for e in range(k, v0):\n'
+        txt += '        mx = {5}(mx, {4} + self.DP(a, {1}, memo {3} - 1))'.format(vs, 'e', vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
+    else:
+        txt += '    mx = {}\n'.format(dpspec.worst())
+        txt += '    for e in range(v0):\n'
+        txt += '      mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callf('e', 'v0'), dpspec.direction())
+        txt += '    for e in range(1, v0):\n'
+        txt += '      mx = {5}(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, 'e', vs, paramstr, dpspec.callf('e', vs), dpspec.direction()) + '\n\n'
+    txt += '    memo[(v0 {})] = mx\n'.format(paramstr)
+    txt += '    return mx\n'
+
+    txt += '\n\n'
+    for case in test_cases:
+        if isinstance(case[0], tuple):
+            txt += 'assert(Solution().{2}({0}, {3}) == {1})\n'.format(case[0][0], case[1], dpspec.name, case[0][1])
+        else:
+            txt += 'assert(Solution().{2}({0}) == {1})\n'.format(case[0], case[1], dpspec.name)
+    open(filename, 'w').write(txt)
+
+def run_cmd(cmd):
+    res = os.system(cmd)
+    assert(res == 0)
 
 test_cases = [([], 0), ([1], 0), ([0, 200], 200)]
 print_dp(DPSpec('maxAbs', ['def A_0(a): return 0', 'def A_1(a, e): return 0'], 'def L(a, v): return 0', 'def M(a, v0, v1): return abs(a[v0] - a[v1])', 'def R(a, v): return 0'), 'dp.py', test_cases)
