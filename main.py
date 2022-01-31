@@ -60,9 +60,9 @@ def print_dp(dpspec, filename, test_cases):
     txt += '      return mx\n'
     txt += '\n'
 
-    txt += '  def DP(self, a, {0}, memo {1}):'.format('v0', paramstr) + '\n'
-    txt += '    if ({0} {1}) in memo:\n'.format('v0', paramstr)
-    txt += '      return memo[({0} {1})]\n'.format('v0', paramstr)
+    txt += '  def DP(self, a, v0, memo {0}):'.format(paramstr) + '\n'
+    txt += '    if (v0 {0}) in memo:\n'.format(paramstr)
+    txt += '      return memo[(v0 {0})]\n'.format(paramstr)
     if dpspec.fixed_length:
         txt += '    mx = {}\n'.format(dpspec.worst())
         txt += '    if k == 2:\n'
