@@ -29,9 +29,9 @@ def print_dp(dpspec, filename, test_cases):
     txt += 'INF = 1000000000\n\n'
     for bf in dpspec.base_cases:
         txt += bf + '\n'
-    txt += dpspec.L + '\n'
+    txt += 'def L(a, v): return {}\n'.format(dpspec.L) 
     txt += dpspec.M + '\n'
-    txt += dpspec.R + '\n\n'
+    txt += 'def R(a, v): return {}\n'.format(dpspec.R) 
 
     paramstr = '' if len(dpspec.parameters) == 0 else ', ' + ', '.join(dpspec.parameters)
 
@@ -95,13 +95,13 @@ def run_cmd(cmd):
 # Max abs - Maximize the sum of absolute values of
 # differences between adjacent entries of the subsequence
 test_cases = [([], 0), ([1], 0), ([0, 200], 200)]
-print_dp(DPSpec('maxAbs', ['def A_0(a): return 0', 'def A_1(a, e): return 0'], 'def L(a, v): return 0', 'def M(a, v0, v1): return abs(a[v0] - a[v1])', 'def R(a, v): return 0'), 'dp.py', test_cases)
+print_dp(DPSpec('maxAbs', ['def A_0(a): return 0', 'def A_1(a, e): return 0'], '0', 'def M(a, v0, v1): return abs(a[v0] - a[v1])', '0'), 'dp.py', test_cases)
 run_cmd('python dp.py')
 
 # Longest increasing subsequence: https://leetcode.com/problems/longest-increasing-subsequence/ - dpgen produces an O(N^2) solution. The optimal solution is O(Nlog(N)).
 test_cases = [([1, 0], 1), ([-1, 2], 2), ([10,9,2,5,3,7,101,18], 4), ([2,15,3,7,8,6,18], 5)]
 lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return 1']
-lis = DPSpec('lengthOfLIS', lis_base_cases, 'def L(a, v): return 1', 'def M(a, v0, v1): return 1 if a[v0] < a[v1] else NEG_INF', 'def R(a, v): return 0')
+lis = DPSpec('lengthOfLIS', lis_base_cases, '1', 'def M(a, v0, v1): return 1 if a[v0] < a[v1] else NEG_INF', '0')
 print_dp(lis, 'lengthOfLIS.py', test_cases)
 run_cmd('python lengthOfLIS.py')
 
@@ -110,7 +110,7 @@ name = 'constrainedSubsetSum'
 test_cases = [(([1], 1), 1), (([10,2,-10,5,20], 2), 37), (([10,2], 2), 12) , (([-1,-2,-3], 1), -1)]
 
 lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return a[e]']
-lis = DPSpec(name, lis_base_cases, 'def L(a, v): return a[v]', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', 'def R(a, v): return 0', ['k']) 
+lis = DPSpec(name, lis_base_cases, 'a[v]', 'def M(a, v0, v1, k): return a[v1] if v1 - v0 <= k else NEG_INF', '0', ['k']) 
 print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
@@ -120,7 +120,7 @@ large_post = list(map(int, '7 96 113 143 191 243 384 421 444 465 469 513 522 602
 test_cases = [(([], 0), 0), (([1, 2, 3, 4, 5], 1), 6), (([1, 2, 3, 6, 7, 9, 11, 22, 44, 50], 5), 9), ((list(map(int, '1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597 2584 4181 6765'.split(' '))), 3), 5026), ((large_post, 25), 24780)]
 lis_base_cases = ['def A_0(a): return 0', 'def A_1(a, e): return a[e]']
 M = 'def M(a, v0, v1, k): return sum(map(lambda x: min(abs(a[v0] - x), abs(a[v1] - x)), a[v0:v1]))'
-lis = DPSpec(name, lis_base_cases, 'def L(a, v): return sum(map(lambda x: a[v] - x, a[0:v]))', M, 'def R(a, v): return sum(map(lambda x: x - a[v], a[v+1:]))', parameters=['k'], maximize=False, fixed_length=True)
+lis = DPSpec(name, lis_base_cases, 'sum(map(lambda x: a[v] - x, a[0:v]))', M, 'sum(map(lambda x: x - a[v], a[v+1:]))', parameters=['k'], maximize=False, fixed_length=True)
 print_dp(lis, name + '.py', test_cases)
 run_cmd('python ' + name + '.py')
 
