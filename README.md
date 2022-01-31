@@ -1,4 +1,4 @@
-# Dynamic Programming Solution Generator
+# Subsequence Optimizer Generator
 
 This repository contains a solver that generates
 dynamic programs that solve optimization problems
