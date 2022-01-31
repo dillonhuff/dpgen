@@ -29,6 +29,7 @@ def print_dp(dpspec, filename, test_cases):
     txt += 'INF = 1000000000\n\n'
 
     paramstr = '' if len(dpspec.parameters) == 0 else ', ' + ', '.join(dpspec.parameters)
+    assert len(dpspec.base_cases) == 2
     for i in range(len(dpspec.base_cases)):
         txt += 'def A_{0}(a, e): return {1}\n'.format(i, dpspec.base_cases[i])
     txt += 'def L(a, v): return {}\n'.format(dpspec.L) 
