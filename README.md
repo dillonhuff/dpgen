@@ -4,7 +4,7 @@ This repository contains a solver that generates
 dynamic programs that solve optimization problems
 of the following form:
 
-Given an array maximize or minimize an objective
+Given an array, maximize (or minimize) an objective
 function over all subsequences of the array.
 
 If a is the original array and
@@ -12,6 +12,8 @@ s is the array of indices included in the subsequence
 then the objective is of the form:
 
 L(a, s[0]) + (Sum from i = 1 to len(a): M(a, s[i - 1], s[i])) + R(a, s[len(s) - 1])
+
+Where L, M, and R are specified by the user.
 
 The user can also optionally specify that they want to find
 the optimal value of the objective function over all subsequences
