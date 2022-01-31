@@ -38,10 +38,10 @@ def print_dp(dpspec, filename, test_cases):
     txt += 'class Solution(object):\n'
 
     txt += '  def {0}(self, a {1}):\n'.format(dpspec.name, paramstr)
-    txt += '    if len(a) == ' + str(0) + ':\n'
-    txt += '      return A_{}(a)'.format(0) + '\n'
-    txt += '    if len(a) == ' + str(1) + ':\n'
-    txt += '      return A_{}(a, 0)'.format(1) + '\n'
+    txt += '    if len(a) == 0:\n'
+    txt += '      return A_0(a)\n'
+    txt += '    if len(a) == 1:\n'
+    txt += '      return A_1(a, 0)\n'
 
     txt += '    if len(a) > 1:\n'
     txt += '      mx = {}\n'.format(dpspec.worst())

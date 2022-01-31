@@ -14,6 +14,8 @@ then the objective is of the form:
 L(a, s[0]) + (Sum from i = 1 to len(a): M(a, s[i - 1], s[i])) + R(a, s[len(s) - 1])
 
 Where L, M, and R are functions specified by the user.
+The user must also specify base cases for when a
+has length zero or one.
 
 The user can also optionally specify that they want to find
 the optimal value of the objective function over all subsequences
