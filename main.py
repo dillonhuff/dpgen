@@ -44,8 +44,6 @@ def print_dp(dpspec, filename, test_cases):
     txt += '    if len(a) > 1:\n'
     txt += '      mx = {}\n'.format(dpspec.worst())
     txt += '      memo = {}\n'
-    dpvars = 'i'
-    vs = 'v0'
     if dpspec.fixed_length:
         txt += '      if k == 1:\n'
         txt += '        for i in range(len(a)):\n'
@@ -53,21 +51,19 @@ def print_dp(dpspec, filename, test_cases):
         txt += '      else:\n'
         txt += '        for i in range(1, len(a)):\n'
 
-        txt += '          mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(1 - 1, dpvars, paramstr, dpspec.direction()) + '\n'
+        txt += '          mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(1 - 1, 'i', paramstr, dpspec.direction()) + '\n'
     else:
         txt += '      for i in range(len(a)):\n'
         txt += '        mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
         txt += '      for i in range(1, len(a)):\n'
-        txt += '        mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(1 - 1, dpvars, paramstr, dpspec.direction()) + '\n'
+        txt += '        mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(1 - 1, 'i', paramstr, dpspec.direction()) + '\n'
     txt += '      return mx\n'
     txt += '\n'
 
+    vs = 'v0'
     txt += '  def DP(self, a, {0}, memo {1}):'.format(vs, paramstr) + '\n'
     txt += '    if ({0} {1}) in memo:\n'.format(vs, paramstr)
     txt += '      return memo[({0} {1})]\n'.format(vs, paramstr)
-    aargs = []
-    aargs.append('{}'.format(0))
-    aargs.append('v0')
     if dpspec.fixed_length:
         txt += '    mx = {}\n'.format(dpspec.worst())
         txt += '    if k == 2:\n'
