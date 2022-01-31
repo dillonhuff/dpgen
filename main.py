@@ -51,19 +51,18 @@ def print_dp(dpspec, filename, test_cases):
         txt += '      else:\n'
         txt += '        for i in range(1, len(a)):\n'
 
-        txt += '          mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(1 - 1, 'i', paramstr, dpspec.direction()) + '\n'
+        txt += '          mx = {1}(mx, self.DP(a, i, memo {0}) + R(a, i))'.format(paramstr, dpspec.direction()) + '\n'
     else:
         txt += '      for i in range(len(a)):\n'
         txt += '        mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
         txt += '      for i in range(1, len(a)):\n'
-        txt += '        mx = {3}(mx, self.DP(a, {1}, memo {2}) + R(a, {1}))'.format(1 - 1, 'i', paramstr, dpspec.direction()) + '\n'
+        txt += '        mx = {1}(mx, self.DP(a, i, memo {0}) + R(a, i))'.format(paramstr, dpspec.direction()) + '\n'
     txt += '      return mx\n'
     txt += '\n'
 
-    vs = 'v0'
-    txt += '  def DP(self, a, {0}, memo {1}):'.format(vs, paramstr) + '\n'
-    txt += '    if ({0} {1}) in memo:\n'.format(vs, paramstr)
-    txt += '      return memo[({0} {1})]\n'.format(vs, paramstr)
+    txt += '  def DP(self, a, {0}, memo {1}):'.format('v0', paramstr) + '\n'
+    txt += '    if ({0} {1}) in memo:\n'.format('v0', paramstr)
+    txt += '      return memo[({0} {1})]\n'.format('v0', paramstr)
     if dpspec.fixed_length:
         txt += '    mx = {}\n'.format(dpspec.worst())
         txt += '    if k == 2:\n'
@@ -71,13 +70,13 @@ def print_dp(dpspec, filename, test_cases):
         txt += '        mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callM('e', 'v0'), dpspec.direction())
         txt += '    else:\n'
         txt += '      for e in range(k, v0):\n'
-        txt += '        mx = {5}(mx, {4} + self.DP(a, {1}, memo {3} - 1))'.format(vs, 'e', vs, paramstr, dpspec.callM('e', vs), dpspec.direction()) + '\n\n'
+        txt += '        mx = {5}(mx, {4} + self.DP(a, {1}, memo {3} - 1))'.format('v0', 'e', 'v0', paramstr, dpspec.callM('e', 'v0'), dpspec.direction()) + '\n\n'
     else:
         txt += '    mx = {}\n'.format(dpspec.worst())
         txt += '    for e in range(v0):\n'
         txt += '      mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callM('e', 'v0'), dpspec.direction())
         txt += '    for e in range(1, v0):\n'
-        txt += '      mx = {5}(mx, {4} + self.DP(a, {1}, memo {3}))'.format(vs, 'e', vs, paramstr, dpspec.callM('e', vs), dpspec.direction()) + '\n\n'
+        txt += '      mx = {5}(mx, {4} + self.DP(a, {1}, memo {3}))'.format('v0', 'e', 'v0', paramstr, dpspec.callM('e', 'v0'), dpspec.direction()) + '\n\n'
     txt += '    memo[(v0 {})] = mx\n'.format(paramstr)
     txt += '    return mx\n'
 
