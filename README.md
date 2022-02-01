@@ -11,7 +11,7 @@ If a is the original array and
 s is the array of indices included in the subsequence
 then the objective is of the form:
 
-L(a, s[0]) + (Sum from i = 1 to len(a): M(a, s[i - 1], s[i])) + R(a, s[len(s) - 1])
+L(a, s[0]) + (Sum from i = 1 to len(s) - 1: M(a, s[i - 1], s[i])) + R(a, s[len(s) - 1])
 
 Where L, M, and R are functions specified by the user.
 The user must also specify base cases for when a
