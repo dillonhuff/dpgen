@@ -34,11 +34,12 @@ def print_dp(dpspec, filename, test_cases):
         txt += 'def A_{0}(a, e): return {1}\n'.format(i, dpspec.base_cases[i])
     txt += 'def L(a, v): return {}\n'.format(dpspec.L) 
     txt += 'def M(a, v0, v1 {1}): return {0}\n'.format(dpspec.M, paramstr)
-    txt += 'def R(a, v): return {}\n'.format(dpspec.R) 
+    txt += 'def R(a, v): return {}\n\n'.format(dpspec.R) 
 
+    lenarg = ', k' if dpspec.fixed_length else ''
 
     txt += 'class Solution(object):\n'
-    txt += '  def {0}(self, a {1}):\n'.format(dpspec.name, paramstr)
+    txt += '  def {0}(self, a {1}{2}):\n'.format(dpspec.name, paramstr, lenarg)
     txt += '    if len(a) == 0:\n'
     txt += '      return A_0(a, 0)\n'
     txt += '    if len(a) == 1:\n'
@@ -53,7 +54,7 @@ def print_dp(dpspec, filename, test_cases):
         txt += '      else:\n'
         txt += '        for i in range(1, len(a)):\n'
 
-        txt += '          mx = {1}(mx, self.DP(a, i, memo {0}) + R(a, i))'.format(paramstr, dpspec.direction()) + '\n'
+        txt += '          mx = {1}(mx, self.DP(a, i, memo {0}{2}) + R(a, i))'.format(paramstr, dpspec.direction(), lenarg) + '\n'
     else:
         txt += '      for i in range(len(a)):\n'
         txt += '        mx = {}(mx, L(a, i) + R(a, i))\n'.format(dpspec.direction())
@@ -62,24 +63,23 @@ def print_dp(dpspec, filename, test_cases):
     txt += '      return mx\n'
     txt += '\n'
 
-    txt += '  def DP(self, a, v0, memo {0}):'.format(paramstr) + '\n'
-    txt += '    if (v0 {0}) in memo:\n'.format(paramstr)
-    txt += '      return memo[(v0 {0})]\n'.format(paramstr)
+    txt += '  def DP(self, a, v0, memo {0}{1}):'.format(paramstr, lenarg) + '\n'
+    txt += '    if (v0 {0}) in memo:\n'.format(lenarg)
+    txt += '      return memo[(v0 {0})]\n'.format(lenarg)
+    txt += '    mx = {}\n'.format(dpspec.worst())
     if dpspec.fixed_length:
-        txt += '    mx = {}\n'.format(dpspec.worst())
         txt += '    if k == 2:\n'
         txt += '      for e in range(v0):\n'
         txt += '        mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callM('e', 'v0'), dpspec.direction())
         txt += '    else:\n'
         txt += '      for e in range(k, v0):\n'
-        txt += '        mx = {2}(mx, {1} + self.DP(a, e, memo {0} - 1))'.format(paramstr, dpspec.callM('e', 'v0'), dpspec.direction()) + '\n\n'
+        txt += '        mx = {2}(mx, {1} + self.DP(a, e, memo {0}, k - 1))'.format(paramstr, dpspec.callM('e', 'v0'), dpspec.direction()) + '\n\n'
     else:
-        txt += '    mx = {}\n'.format(dpspec.worst())
         txt += '    for e in range(v0):\n'
         txt += '      mx = {1}(mx, L(a, e) + {0})\n'.format(dpspec.callM('e', 'v0'), dpspec.direction())
         txt += '    for e in range(1, v0):\n'
         txt += '      mx = {2}(mx, {1} + self.DP(a, e, memo {0}))'.format(paramstr, dpspec.callM('e', 'v0'), dpspec.direction()) + '\n\n'
-    txt += '    memo[(v0 {})] = mx\n'.format(paramstr)
+    txt += '    memo[(v0 {})] = mx\n'.format(lenarg)
     txt += '    return mx\n'
 
     txt += '\n\n'
@@ -122,7 +122,7 @@ large_post = list(map(int, '7 96 113 143 191 243 384 421 444 465 469 513 522 602
 test_cases = [(([], 0), 0), (([1, 2, 3, 4, 5], 1), 6), (([1, 2, 3, 6, 7, 9, 11, 22, 44, 50], 5), 9), ((list(map(int, '1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597 2584 4181 6765'.split(' '))), 3), 5026), ((large_post, 25), 24780)]
 lis_base_cases = ['0', '0 if k == 1 else INF']
 M = 'sum(map(lambda x: min(abs(a[v0] - x), abs(a[v1] - x)), a[v0:v1]))'
-lis = DPSpec(name, lis_base_cases, 'sum(map(lambda x: a[v] - x, a[0:v]))', M, 'sum(map(lambda x: x - a[v], a[v+1:]))', parameters=['k'], maximize=False, fixed_length=True)
+lis = DPSpec(name, lis_base_cases, 'sum(map(lambda x: a[v] - x, a[0:v]))', M, 'sum(map(lambda x: x - a[v], a[v+1:]))', maximize=False, fixed_length=True)
 run_tests(lis, test_cases)
 
 
